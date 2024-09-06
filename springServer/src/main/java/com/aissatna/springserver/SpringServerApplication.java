@@ -39,7 +39,13 @@ public class SpringServerApplication implements CommandLineRunner {
 				.email("johncena@email.com")
 				.build();
 
-		employeeRepository.saveAll(List.of(e1, e2, e3));
+		Employee e4 = Employee.builder()
+				.firstName("Leo")
+				.lastName("Messi")
+				.email("leomessi@email.com")
+				.build();
+
+		employeeRepository.saveAll(List.of(e1, e2, e3, e4));
 
 	}
 }
