@@ -1,7 +1,7 @@
 <template>
-  <div id="app">
-    <EmployeeList/>
-  </div> 
+  <main>
+    <EmployeeList />
+  </main>
 </template>
 
 <script>
@@ -15,11 +15,26 @@ export default {
 </script>
 
 <style>
-#app {
+
+#app{
   font-family: 'Lora', serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-  margin-top: 60px;
+}
+
+
+main{
+  margin: 0 auto;
+  padding: 30px;
+  background-color: white;
+ 
+}
+footer{
+   position: fixed;
+   left: 0;
+   height: 50px;
+   bottom: 0;
+   width: 100%;
+   background: linear-gradient(to left,#649173 , #dbd5a4);
+   text-align: center;  
+    
 }
 </style>

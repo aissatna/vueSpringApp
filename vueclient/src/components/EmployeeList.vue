@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="d-flex justify-content-between align-items-center my-5">
-      <h1 class="text-center mb-0">Employee Records</h1>
+      <h1 class="text-center mb-0">Employees View</h1>
       <button type="button" class="btn btn-success" @click="showModal('newEmployeeModal')">
         New Employee
       </button>
@@ -9,11 +9,13 @@
 
     <table class="table table-striped text-center">
       <thead>
-        <th>ID</th>
-        <th>FirstName</th>
-        <th>LastName</th>
-        <th>Email</th>
-        <th>Action</th>
+        <tr>
+          <th>ID</th>
+          <th>FirstName</th>
+          <th>LastName</th>
+          <th>Email</th>
+          <th>Action</th>
+        </tr>
       </thead>
       <tbody>
         <tr v-for="employee in employees" v-bind:key="employee.id">
@@ -96,7 +98,8 @@
   </div>
 
   <!-- New Employee Modal -->
-  <div class="modal fade" id="newEmployeeModal" tabindex="-1" aria-labelledby="newEmployeeModalLabel" aria-hidden="true">
+  <div class="modal fade" id="newEmployeeModal" tabindex="-1" aria-labelledby="newEmployeeModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -127,6 +130,12 @@
     </div>
   </div>
 
+  <!-- Toast component for success message -->
+  <NotificationToast v-if="showSuccessToast" :message="toastMessage" type="success" title="Success" />
+
+  <!-- Toast component for error message -->
+  <NotificationToast v-if="showErrorToast" :message="toastMessage" type="error" title="Error" />
+
 
 </template>
 
@@ -136,11 +145,13 @@ import EmployeeService from "../services/EmployeeService";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Modal } from "bootstrap/dist/js/bootstrap.bundle.min.js";
+import NotificationToast from "./shared/NotificationToast.vue";
 
 export default {
   name: "EmployeeList",
   components: {
     FontAwesomeIcon,
+    NotificationToast,
   },
   data() {
     return {
@@ -149,12 +160,21 @@ export default {
       trashIcon: faTrash,
       selectedEmployeeForDelete: null,
       selectedEmployeeForUpdate: null,
-      updateFirstName: "",  // First name for the employee being updated
-      updateLastName: "",   // Last name for the employee being updated
-      updateEmail: "",      // Email for the employee being updated
-      newFirstName: "",     // First name for the new employee being added
-      newLastName: "",      // Last name for the new employee being added
-      newEmail: "",         // Email for the new employee being added
+
+      // Update Employee Modal variables
+      updateFirstName: "",
+      updateLastName: "",
+      updateEmail: "",
+
+      // New Employee Modal variables
+      newFirstName: "",
+      newLastName: "",
+      newEmail: "",
+      // Toast variables
+      showSuccessToast: false,
+      showErrorToast: false,
+      toastMessage: ''
+
 
     };
   },
@@ -177,8 +197,16 @@ export default {
       if (this.selectedEmployeeForDelete) {
         EmployeeService.deleteEmployee(this.selectedEmployeeForDelete).then(() => {
           this.getEmployees();
-          this.hideModal("deleteModal");
-        });
+          this.hideModal("deleteModal")
+          this.toastMessage = "Employee deleted successfully";
+          this.showSuccessToast = true;
+          this.hideToastAfterDelay();
+        })
+          .catch(() => {
+            this.toastMessage = "Error deleting employee";
+            this.showErrorToast = true;
+            this.hideToastAfterDelay();
+          });
       }
     },
     // edit employee action handler
@@ -201,6 +229,14 @@ export default {
           .then(() => {
             this.getEmployees();
             this.hideModal("updateModal");
+            this.toastMessage = "Employee updated successfully";
+            this.showSuccessToast = true;
+            this.hideToastAfterDelay();
+          })
+          .catch(() => {
+            this.toastMessage = "Error updating employee";
+            this.showErrorToast = true;
+            this.hideToastAfterDelay();
           });
       }
     },
@@ -214,8 +250,24 @@ export default {
             this.newFirstName = "";
             this.newLastName = "";
             this.newEmail = "";
+            this.toastMessage = "New employee added successfully";
+            this.showSuccessToast = true;
+            this.hideToastAfterDelay();
+          })
+          .catch(() => {
+            this.toastMessage = "Error adding new employee";
+            this.showErrorToast = true;
+            this.hideToastAfterDelay();
           });
       }
+    },
+
+    // Toast Helpers functions
+    hideToastAfterDelay() {
+      setTimeout(() => {
+        this.showSuccessToast = false;
+        this.showErrorToast = false;
+      }, 6000); // Delay 6 seconds
     },
 
     // Modal Helpers functions
@@ -238,5 +290,4 @@ export default {
 </script>
 
 
-<style>
-</style>
+<style></style>
